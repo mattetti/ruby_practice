@@ -1,0 +1,83 @@
+-#   Copyright (c) 2010-2011, Diaspora Inc.  This file is
+-#   licensed under the Affero General Public License version 3 or later.  See
+-#   the COPYRIGHT file.
+
+
+- if AppConfig[:open_invitations]
+  .section
+    .title
+      = image_tag('icons/plus.png')
+      %h5
+        = t('shared.invitations.invite_your_friends')
+    .content
+      = render "shared/invitations"
+
+.section
+  .title
+    = image_tag('icons/heart.png')
+    %h5
+      = t('aspects.index.new_here.title')
+  .content
+    != t('aspects.index.new_here.follow', :link => link_to("#"+t('shared.publisher.new_user_prefill.newhere'), tag_path(:name => t('shared.publisher.new_user_prefill.newhere'))))
+    %br
+    = link_to(t('aspects.index.new_here.learn_more'), "https://github.com/diaspora/diaspora/wiki/Welcoming-Committee")
+
+.section
+  .title
+    = image_tag('icons/question.png')
+    %h5
+      = t('aspects.index.help.need_help')
+  .content
+    = t('aspects.index.help.here_to_help')
+    %br
+    = t('aspects.index.help.do_you')
+    %br
+    != t('aspects.index.help.have_a_question', :link => link_to("#"+t('aspects.index.help.tag_question'), tag_path(:name => t('aspects.index.help.tag_question'))))
+    %br
+    != t('aspects.index.help.find_a_bug', :link => link_to("#"+t('aspects.index.help.tag_bug'), tag_path(:name => t('aspects.index.help.tag_bug'))))
+    %br
+    != t('aspects.index.help.feature_suggestion', :link => link_to("#"+t('aspects.index.help.tag_feature'), tag_path(:name => t('aspects.index.help.tag_feature'))))
+    %br
+    %br
+    %p
+      != t('aspects.index.help.tutorials_wiki_and_forum', :tutorial => link_to("Diasporial" , "http://diasporial.com/tutorials", :target => '_blank'), :wiki => link_to('Wiki','http://github.com/diaspora/diaspora/wiki', :target => '_blank'), :forum => link_to("Forum", "http://www.diasporaforum.org/", :target => '_blank'))
+    %p
+      != t('aspects.index.help.email_feedback', :link => link_to(t('aspects.index.help.email_link'), "mailto:feedback@joindiaspora.com"))
+
+- unless AppConfig.configured_services.blank? || all_services_connected?
+  .section
+    .title
+      = image_tag('icons/monotone_wrench_settings.png')
+      %h5
+        = t('aspects.index.services.heading')
+    .content
+      %div
+        = t('aspects.index.services.content')
+
+      #right_service_icons
+        - AppConfig.configured_services.each do |service|
+          - unless current_user.services.any?{|x| x.provider == service}
+            = link_to(image_tag("social_media_logos/#{service.to_s.downcase}-24x24.png", :title => service.to_s.titleize), "/auth/#{service}")
+
+.section
+  .title
+    = image_tag('icons/bookmark.png')
+    %h5
+      = t('bookmarklet.heading')
+  .content
+    != t('bookmarklet.explanation', :link => link_to(t('bookmarklet.post_something'), magic_bookmarklet_link))
+
+.section
+  .title
+    = image_tag('icons/coffee.png')
+    %h5
+      = t('aspects.index.donate')
+  .content
+    - if AppConfig[:paypal_hosted_button_id].present?
+      = t('aspects.index.keep_pod_running', :pod => URI.parse(AppConfig[:pod_url]).host)
+      %br
+      = render 'shared/donatepod'
+    - else
+      = t('aspects.index.keep_diaspora_running')
+      %br
+      = render 'shared/donatediaspora'

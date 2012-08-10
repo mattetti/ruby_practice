@@ -1,0 +1,32 @@
+.span-15.last
+  .span-3
+    = image_tag 'icons/monotone_email_letter_round.png', :height => "128px", :width => "128px"
+
+  .span-12.last
+    %h2
+      = t('.invite_someone_to_join')
+      %br
+  .span-7.append-1.last
+    %b= t('.paste_link')
+    %br
+    %br
+    = invite_link(@invite_code)
+    = t('.codes_left', :count => @invite_code.count)
+    %br
+    %br
+    #email_invitation
+
+      = form_tag new_user_invitation_path  do
+        %h4
+          = t('email')
+        = text_field_tag 'email_inviter[emails]' ,nil, :title => t('.comma_separated_plz'), :placeholder => 'foo@bar.com, max@foo.com...'
+        %br
+
+        %h4
+          = t('.language')	
+        = select_tag('email_inviter[locale]',  options_from_collection_for_select(available_language_options, "second", "first", :selected => current_user.language))
+
+        %br
+
+        %p
+          = submit_tag t('.send_an_invitation')

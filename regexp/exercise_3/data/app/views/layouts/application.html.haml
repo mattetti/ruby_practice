@@ -1,0 +1,71 @@
+-#   Copyright (c) 2010-2011, Diaspora Inc.  This file is
+-#   licensed under the Affero General Public License version 3 or later.  See
+-#   the COPYRIGHT file.
+
+!!!
+%html{:lang => I18n.locale.to_s, :dir => (rtl?) ? 'rtl' : 'ltr'}
+  %head
+    %meta{:charset => 'utf-8'}
+    %meta{'http-equiv' => 'X-UA-Compatible', :content => 'IE=edge,chrome=1'}
+    %meta{"http-equiv"=>"Content-Type", :content=>"text/html; charset=utf-8"}
+
+    %meta{:name => "description", :content => "Diaspora*"}
+    %meta{:name => "author", :content => "Diaspora, Inc."}
+    = og_site_name
+
+    %link{:rel => 'shortcut icon', :href => "#{image_path('favicon.png')}" }
+    %link{:rel => 'apple-touch-icon', :href => "#{image_path('apple-touch-icon.png')}"}
+
+    %title
+      = page_title yield(:page_title)
+
+    = chartbeat_head_block
+    = include_mixpanel
+
+    = include_base_css_framework
+    = stylesheet_link_tag 'login', 'application', 'default'
+
+    - if rtl?
+      = stylesheet_link_tag :rtl, :media => 'all'
+
+    = old_browser_js_support
+    <!--[if IE]>
+    = javascript_include_tag :ie
+    <![endif]-->
+
+    = jquery_include_tag
+
+    - unless @landing_page
+      = javascript_include_tag :main, :templates
+      = load_javascript_locales
+
+    = set_asset_host
+    = set_current_user_in_javascript
+    = translation_missing_warnings
+    = current_user_atom_tag
+
+    = yield(:head)
+    = csrf_meta_tag
+
+  %body
+    = flash_messages
+
+    %header
+      - unless current_user
+        = render 'layouts/header'
+
+    .container
+      - if @aspect == :getting_started
+        = yield
+      - else
+        .span-24.last
+          = yield
+
+    - unless @landing_page
+      %a{:id=>"back-to-top", :title=>"#{t('.back_to_top')}", :href=>"#"}
+        &#8679;
+
+    = render :partial =>'shared/footer'
+
+    = include_chartbeat
+    = include_mixpanel_guid
